@@ -18,12 +18,10 @@ import frc.robot.subsystems.CANRollerSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
   // The robot's subsystems
@@ -34,7 +32,7 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(
       OperatorConstants.DRIVER_CONTROLLER_PORT);
 
-  // The operator's controller
+  // The operator's controller (unused in this version, but can be uncommented if needed)
   // private final CommandXboxController operatorController = new CommandXboxController(
   //    OperatorConstants.OPERATOR_CONTROLLER_PORT);
 
@@ -48,8 +46,8 @@ public class RobotContainer {
     // Set up command bindings
     configureBindings();
 
-    // Set the options to show up in the Dashboard for selecting auto modes. If you
-    // add additional auto modes you can add additional lines here with
+    // Set the options to show up in the Dashboard for selecting auto modes.
+    // If you add additional auto modes you can add additional lines here with
     // autoChooser.addOption
     autoChooser.setDefaultOption("Autonomous", new AutoCommand(driveSubsystem));
   }
@@ -61,39 +59,37 @@ public class RobotContainer {
    * an arbitrary
    * predicate, or via the named factories in {@link
    * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link
-   * CommandXboxController
-   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+   * {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
    * PS4} controllers or
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
   private void configureBindings() {
-    // Set the A button to run the "RollerCommand" command with a fixed
-    // value ejecting the gamepiece while the button is held
-
-    // before
+    // Set the A button to run the "RollerCommand" command for ejection while the button is held.
+    // The RollerCommand is configured to eject with a fixed value (RollerConstants.ROLLER_EJECT_VALUE)
+    // when the A button is pressed.
     driverController.a()
         .whileTrue(new RollerCommand(() -> RollerConstants.ROLLER_EJECT_VALUE, () -> 0, rollerSubsystem));
 
     // Set the default command for the drive subsystem to an instance of the
-    // DriveCommand with the values provided by the joystick axes on the driver
-    // controller. The Y axis of the controller is inverted so that pushing the
-    // stick away from you (a negative value) drives the robot forwards (a positive
-    // value). Similarly for the X axis where we need to flip the value so the
-    // joystick matches the WPILib convention of counter-clockwise positive
+    // DriveCommand with values provided by the joystick axes on the driver
+    // controller. 
+    // The Y axis of the controller is inverted so that pushing the stick away from you (negative value) 
+    // drives the robot forwards (positive value). Similarly for the X axis, where the value is flipped 
+    // so that the joystick matches the WPILib convention of counter-clockwise positive.
     driveSubsystem.setDefaultCommand(new DriveCommand(
-        () -> -driverController.getLeftY() *
-            (driverController.getHID().getRightBumperButton() ? 1 : 0.5),
-        () -> -driverController.getRightX(),
+        () -> -driverController.getLeftY() * // Left Y axis controls forward/backward movement
+            (driverController.getHID().getRightBumperButton() ? 1 : 0.5), // Right bumper changes speed scaling
+        () -> -driverController.getRightX(), // Right X axis controls turning
         driveSubsystem));
 
     // Set the default command for the roller subsystem to an instance of
-    // RollerCommand with the values provided by the triggers on the driver
-    // controller
+    // RollerCommand with values provided by the triggers on the driver controller.
+    // The right trigger controls the roller forward speed (e.g., intake),
+    // and the left trigger controls the roller reverse speed (e.g., ejection).
     rollerSubsystem.setDefaultCommand(new RollerCommand(
-        () -> driverController.getRightTriggerAxis(),
-        () -> driverController.getLeftTriggerAxis(),
+        () -> driverController.getRightTriggerAxis(), // Right trigger controls forward roller speed
+        () -> driverController.getLeftTriggerAxis(),  // Left trigger controls reverse roller speed
         rollerSubsystem));
   }
 
@@ -103,7 +99,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
+    // Return the selected autonomous command.
     return autoChooser.getSelected();
   }
 }
